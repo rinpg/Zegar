@@ -1,5 +1,5 @@
 Zak³adam, ¿e nie wszyscy maj¹ dostêp do wykorzystywanego procesora jak i równie¿ programatora, 
 dlatego te¿ zamieszczam tu link do symulatora procesorów AVR, 
-w kórym bêdzie mo¿na sprawdziæ na bie¿¹co poprawnoœæ dzia³ania programu. 
+w którym bêdzie mo¿na sprawdziæ na bie¿¹co poprawnoœæ dzia³ania programu. 
 
 http://www.atmel.com/Microsite/atmel-studio/
