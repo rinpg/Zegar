@@ -1,3 +1,4 @@
-Przydatne narzêdzie do generowania poszczególnych cyfr na wyœwietlaczu.
+Przydatne narzêdzie do generowania poszczególnych cyfr na wyœwietlaczu:
+
 
 http://mirekk36.blogspot.com/2013/09/7-segment-display-generator.html
