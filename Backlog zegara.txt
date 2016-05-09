@@ -1,0 +1,8 @@
+Backlog zegara
+Backlog	Produktu	to	uporz¹dkowana	lista	wszystkiego,	co	mo¿e	byæ	potrzebne	w	produkcie	oraz	
+jedyne	Ÿród³o	wymaganych	zmian,	które	maj¹	byæ	w	produkcie	wprowadzone. Reszta tutaj:
+http://upel.agh.edu.pl/weaiib/pluginfile.php/10761/mod_resource/content/2/Scrum-Guide-PL.pdf
+
+Funkcjonalnoœci zegara:
+- pokazywanie aktualnej godziny
+- pokazywanie aktualnej daty?
