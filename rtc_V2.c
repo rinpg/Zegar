@@ -65,3 +65,57 @@ struct tm* rtc_get_time(void){
 }
 //*********************************************************************
 #endif
+
+#if GET_SHORT
+//********obczyt czasu z rtc w formie trzech zmiennych ****************
+void rtc_get_time_s(uint8_t* hour, uint8_t* min, uint8_t* sec)
+{
+	uint8_t rtc[9];
+
+	// read 7 bytes starting from register 0
+	// sec, min, hour, day-of-week, date, month, year
+	twi_begin_transmission(RTC_ADDR);
+	twi_send_byte(0x0);
+	twi_end_transmission();
+	
+	twi_request_from(RTC_ADDR, 7);
+	
+	for(uint8_t i=0; i<7; i++) {
+		rtc[i] = twi_receive();
+	}
+	
+	twi_end_transmission();
+	
+	if (sec)  *sec =  bcd2dec(rtc[0]);
+	if (min)  *min =  bcd2dec(rtc[1]);
+	if (hour) *hour = bcd2dec(rtc[2]);
+}
+//*********************************************************************
+#endif
+
+
+
+#if SET_FULL
+//********ustawienie pe³nego czasu rtc w formie struktury**************
+void rtc_set_time(struct tm* tm_){
+	twi_begin_transmission(RTC_ADDR);
+	twi_send_byte(0x0);
+	uint8_t century;
+	if (tm_->year > 2000) {
+		century = 0x80;
+		tm_->year = tm_->year - 2000;
+	} else {
+		century = 0;
+		tm_->year = tm_->year - 1900;
+	}
+	twi_send_byte(dec2bcd(tm_->sec)); 			// seconds
+	twi_send_byte(dec2bcd(tm_->min));			// minutes
+	twi_send_byte(dec2bcd(tm_->hour)); 			// hours
+	twi_send_byte(dec2bcd(tm_->wday)); 			// day of week
+	twi_send_byte(dec2bcd(tm_->mday)); 			// day
+	twi_send_byte(dec2bcd(tm_->mon) + century); // month
+	twi_send_byte(dec2bcd(tm_->year)); 			// year
+	twi_end_transmission();
+}
+//*********************************************************************
+#endif
