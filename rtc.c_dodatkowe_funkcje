@@ -1,0 +1,71 @@
+#if ALARM_1
+void rtc_set_alarm_1(uint8_t mode, uint8_t data, uint8_t hour, uint8_t min, uint8_t sec){
+	if (mode > 6) return;
+	if (data > 31) return;
+	if (hour > 23) return;
+	if (min > 59) return;
+	if (sec > 59) return;
+	uint8_t a1m1=0, a1m2=0, a1m3=0, a1m4=0, d1=0;
+
+	if(mode==1)
+		a1m1=0b10000000;		 // A1M1
+	if((mode==1)|(mode==2))
+		a1m2=0b10000000;		 // A1M2
+	if((mode==1)|(mode==2)|(mode==3))
+		a1m3=0b10000000;		 // A1M3
+	if((mode==1)|(mode==2)|(mode==3)|(mode==4))
+		a1m4=0b10000000;		 // A1M4
+	if(mode==6)
+		d1=0b010000000;			 // DY/DT
+
+	rtc_write_byte((dec2bcd(sec)|a1m1),  0x07); // second
+	rtc_write_byte((dec2bcd(min)|a1m2),  0x08); // minute
+	rtc_write_byte((dec2bcd(hour)|a1m3), 0x09); // hour
+	rtc_write_byte((dec2bcd(data)|d1|a1m4), 	 0x0a); // data
+	uint8_t val = rtc_read_byte(0x0f);
+	rtc_write_byte(val & ~0b00000001, 0x0f);
+}
+void rtc_get_alarm_1(uint8_t* mode, uint8_t* data, uint8_t* hour, uint8_t* min, uint8_t* sec){
+		*sec  = bcd2dec(rtc_read_byte(0x07) & ~0b10000000);
+		*min  = bcd2dec(rtc_read_byte(0x08) & ~0b10000000);
+		*hour = bcd2dec(rtc_read_byte(0x09) & ~0b10000000);
+		*data = bcd2dec(rtc_read_byte(0x0a) & ~0b11000000);
+
+		if((((rtc_read_byte(0x07)&0b10000000))==0b10000000) &
+		   (((rtc_read_byte(0x08)&0b10000000))==0b10000000) &
+		   (((rtc_read_byte(0x09)&0b10000000))==0b10000000) &
+		   (((rtc_read_byte(0x0a)&0b10000000))==0b10000000) )
+				*mode=1;
+		if((((rtc_read_byte(0x07)&0b10000000))==0b00000000) &
+		   (((rtc_read_byte(0x08)&0b10000000))==0b10000000) &
+		   (((rtc_read_byte(0x09)&0b10000000))==0b10000000) &
+		   (((rtc_read_byte(0x0a)&0b10000000))==0b10000000) )
+				*mode=2;
+		if((bcd2dec(((rtc_read_byte(0x07)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x08)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x09)&0b10000000)))==0b10000000) &
+		   (bcd2dec(((rtc_read_byte(0x0a)&0b10000000)))==0b10000000) )
+				*mode=3;
+		if((bcd2dec(((rtc_read_byte(0x07)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x08)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x09)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x0a)&0b10000000)))==0b10000000) )
+				*mode=4;
+		if((bcd2dec(((rtc_read_byte(0x07)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x08)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x09)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x0a)&0b11000000)))==0b00000000) )
+				*mode=5;
+		if((bcd2dec(((rtc_read_byte(0x07)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x08)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x09)&0b10000000)))==0b00000000) &
+		   (bcd2dec(((rtc_read_byte(0x0a)&0b11000000)))==0b01000000) )
+				*mode=6;
+}
+uint8_t rtc_check_alarm_1(void){
+		uint8_t val = rtc_read_byte(0x0f)&0b00000001;
+
+		if (val & 1)rtc_write_byte(val & ~0b00000001, 0x0f);
+				return val & 1 ? 1 : 0;
+}
+#endif
